@@ -1,7 +1,69 @@
 <!doctype html>
-<title>Hello from Flask</title>
-{% if name %}
-  <h1>Hello {{ name }}!</h1>
-{% else %}
-  <h1>Hello World!</h1>
-{% endif %}
+<html>
+<table border="1">
+  <tr>
+    <td>Введите ключ</td>
+    <td><input class="js-input-access-key"></td>
+    <td><button type="submit" onclick="getSitesBtn()">Загрузить сайты</button></td>
+  </tr>
+</table>
+<p></p>
+<table border="1" class="js-sites">
+  <tr class="js-table-begin">
+    <td>Номер</td>
+    <td>Сервис проверки кода вставки</td>
+    <td>Запуск</td>
+  </tr>
+</table>
+
+</html>
+
+<script>
+  async function postData(url = '', data = {}) {
+    const response = await fetch(url, {
+      method: 'POST',
+      mode: 'cors',
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer',
+      body: JSON.stringify(data)
+    });
+    return await response.json();
+  }
+  function createTableHtml(sites) {
+    let resultHtml = ``;
+    for (let site of sites) {
+      let tableHTML =
+        `
+                            <tr>
+                              <td>${sites.indexOf(site)}</td>
+                              <td>${site["domain_name"]}</td>
+                              <td><button type="button" onclick="checkSiteBtn('${site['domain_name']}','${site['site_key']}',${sites.indexOf(site)})">Проверить</button></td>
+                            </tr>
+                          `;
+      resultHtml += tableHTML;
+    }
+    return resultHtml;
+  }
+
+  document.checkSiteBtn = function (site = '', site_key = '', site_number = '') {
+    console.log(site, site_key, site_number);
+  }
+
+  document.getSitesBtn = async function () {
+    let access_token = document.querySelector('.js-input-access-key').value;
+    document.querySelector('.js-table-begin').insertAdjacentHTML('afterEnd', '');
+    let data = await postData('http://127.0.0.1:5000/api/v1.0/account', { "access_token": access_token });
+    if (data["error"]) {
+      alert(data["error"]);
+      return;
+    }
+    let tableHTML = createTableHtml(data["message"])
+    document.querySelector('.js-table-begin').insertAdjacentHTML('afterEnd', tableHTML);
+
+  }
+</script>
