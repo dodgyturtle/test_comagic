@@ -1,8 +1,7 @@
 import json
-from typing import Any, Callable
 
 import requests
-from flask import Blueprint, current_app, request, url_for, wrappers
+from flask import Blueprint, current_app, request, wrappers
 from marshmallow import ValidationError
 
 from .handler import (
