@@ -34,6 +34,7 @@
     });
     return await response.json();
   }
+
   function createTableHtml(sites) {
     let resultHtml = ``;
     for (let site of sites) {
@@ -41,7 +42,7 @@
         `
                             <tr>
                               <td>${sites.indexOf(site)}</td>
-                              <td>${site["domain_name"]}</td>
+                              <td class="js-site-${sites.indexOf(site)}">${site["domain_name"]}</td>
                               <td><button type="button" onclick="checkSiteBtn('${site['domain_name']}','${site['site_key']}',${sites.indexOf(site)})">Проверить</button></td>
                             </tr>
                           `;
@@ -50,8 +51,13 @@
     return resultHtml;
   }
 
-  document.checkSiteBtn = function (site = '', site_key = '', site_number = '') {
-    console.log(site, site_key, site_number);
+  document.checkSiteBtn = async function (site = '', site_key = '', site_number = '') {
+    let data = await postData('http://127.0.0.1:5000/api/v1.0/site', { "url": site, "site_key": site_key });
+    if (data["error"]) {
+      document.querySelector(`.js-site-${site_number}`).innerHTML = data["error"];
+      return;
+    }
+    document.querySelector(`.js-site-${site_number}`).innerText = JSON.stringify(data["message"]);
   }
 
   document.getSitesBtn = async function () {
@@ -62,8 +68,7 @@
       alert(data["error"]);
       return;
     }
-    let tableHTML = createTableHtml(data["message"])
+    let tableHTML = createTableHtml(data["message"]);
     document.querySelector('.js-table-begin').insertAdjacentHTML('afterEnd', tableHTML);
-
   }
 </script>

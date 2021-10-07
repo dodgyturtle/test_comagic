@@ -8,5 +8,5 @@ class AccountSchema(Schema):
 
 
 class SiteSchema(Schema):
-    url = fields.Str(required=True)
-    username = fields.Str(required=True, validate=URL)
+    url = fields.Str(required=True, validate=URL())
+    site_key = fields.Str(required=True, validate=Length(32))

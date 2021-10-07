@@ -9,5 +9,7 @@ env.read_env()
 DEBUG = env.bool("DEBUG", True)
 
 API_URL = "https://dataapi.comagic.ru/v2.0"
-SITES_AMMOUNT = 5
+SITES_AMMOUNT = 40
 ACCOUNT_ID = 1
+REQUEST_TIMEOUT = 2
+SCRIPT_STRING = "https://app.comagic.ru/static/cs.min.js"
