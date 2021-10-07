@@ -41,7 +41,8 @@ def get_account_sites(
 
 def check_script(response_data: requests.models.Response) -> bool:
     soup = BeautifulSoup(response_data.content, "html.parser")
-    script = soup.find("script", attrs={"src": current_app.config["SCRIPT_STRING"]})
+    script_string = current_app.config["SCRIPT_STRING"]
+    script = soup.find("script", attrs={"src": re.compile(f".*{script_string}.*")})
     return True if script else False
 
 
